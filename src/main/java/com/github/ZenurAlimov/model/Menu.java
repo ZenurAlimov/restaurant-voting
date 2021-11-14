@@ -1,13 +1,37 @@
 package com.github.ZenurAlimov.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 
-@Data
-@NoArgsConstructor
+@Entity
+@Table(name = "menu", uniqueConstraints = @UniqueConstraint(columnNames = {"restaurant_id", "date"}, name = "menu_unique_restaurant_date_idx"))
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(callSuper = true)
 public class Menu extends BaseEntity {
 
+    @Column(name = "date", nullable = false, columnDefinition = "timestamp default now()")
+    @NotNull
     private LocalDate date;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "menu")
+    @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/62848296/548473
+    private List<Dish> dishes;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    @ToString.Exclude
+    private Restaurant restaurant;
+
+    public Menu(Integer id, LocalDate date) {
+        super(id);
+        this.date = date;
+    }
 }
