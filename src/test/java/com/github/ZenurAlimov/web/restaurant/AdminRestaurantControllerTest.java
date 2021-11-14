@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.github.ZenurAlimov.util.JsonUtil.writeValue;
-import static com.github.ZenurAlimov.web.dish.DishTestData.DISH1_ID;
 import static com.github.ZenurAlimov.web.restaurant.RestaurantTestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

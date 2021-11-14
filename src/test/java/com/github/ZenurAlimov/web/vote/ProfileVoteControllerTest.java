@@ -19,7 +19,6 @@ import static com.github.ZenurAlimov.util.JsonUtil.writeValue;
 import static com.github.ZenurAlimov.web.restaurant.RestaurantTestData.*;
 import static com.github.ZenurAlimov.web.user.UserTestData.*;
 import static com.github.ZenurAlimov.web.vote.VoteTestData.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
