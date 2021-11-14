@@ -1,5 +1,6 @@
 package com.github.ZenurAlimov.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
@@ -21,6 +22,12 @@ public class Dish extends NamedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", nullable = false)
+    @JsonBackReference
     @ToString.Exclude
     private Menu menu;
+
+    public Dish(Integer id, String name, Integer price) {
+        super(id, name);
+        this.price = price;
+    }
 }

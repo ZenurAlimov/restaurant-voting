@@ -1,5 +1,7 @@
 package com.github.ZenurAlimov.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -23,10 +25,12 @@ public class Menu extends BaseEntity {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "menu")
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/62848296/548473
+    @JsonManagedReference
     private List<Dish> dishes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
+    @JsonBackReference
     @ToString.Exclude
     private Restaurant restaurant;
 
