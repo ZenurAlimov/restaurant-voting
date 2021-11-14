@@ -23,10 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ProfileVoteControllerTest extends AbstractControllerTest {
+class VoteControllerTest extends AbstractControllerTest {
     public static final LocalDate TODAY = LocalDate.now();
 
-    private static final String REST_URL = ProfileVoteController.REST_URL + '/';
+    private static final String REST_URL = VoteController.REST_URL + '/';
 
     @Autowired
     private VoteRepository repository;

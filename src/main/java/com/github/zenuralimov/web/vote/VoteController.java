@@ -31,13 +31,13 @@ import static com.github.zenuralimov.util.DateUtil.dayOrMin;
 import static com.github.zenuralimov.web.restaurant.RestaurantController.TODAY;
 
 @RestController
-@RequestMapping(value = ProfileVoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
 @Transactional(readOnly = true)
-public class ProfileVoteController {
+public class VoteController {
 
-    static final String REST_URL = "/api/profile/votes";
+    static final String REST_URL = "/api/votes";
 
     private final VoteRepository voteRepository;
     private final UserRepository userRepository;
