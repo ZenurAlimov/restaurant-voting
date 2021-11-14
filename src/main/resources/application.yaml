@@ -39,6 +39,7 @@ logging:
     root: WARN
     ru.javaops.topjava2: DEBUG
     org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
+    org.springframework.cache: TRACE
 
 server.servlet:
   encoding:
