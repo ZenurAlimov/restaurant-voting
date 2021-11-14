@@ -1,3 +1,4 @@
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/ac226ae60c644f89980ea354b887b211)](https://www.codacy.com/gh/ZenurAlimov/restaurant-voting/dashboard)
 ![logo.jpg](logo.jpg)
 - Spring Boot
 - Spring Data JPA
