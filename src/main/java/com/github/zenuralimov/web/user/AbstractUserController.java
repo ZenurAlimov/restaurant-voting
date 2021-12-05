@@ -5,7 +5,6 @@ import com.github.zenuralimov.repository.UserRepository;
 import com.github.zenuralimov.util.UserUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -29,7 +28,6 @@ public abstract class AbstractUserController {
         return ResponseEntity.of(repository.findById(id));
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     public void delete(int id) {
         log.info("delete {}", id);
         repository.deleteExisted(id);

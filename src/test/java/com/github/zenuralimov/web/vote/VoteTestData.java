@@ -4,12 +4,14 @@ import com.github.zenuralimov.model.Vote;
 import com.github.zenuralimov.to.VoteTo;
 import com.github.zenuralimov.web.MatcherFactory;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.*;
 import static com.github.zenuralimov.web.user.UserTestData.admin;
 import static com.github.zenuralimov.web.user.UserTestData.user;
+import static com.github.zenuralimov.web.vote.VoteController.TIME_LIMIT;
 
 public class VoteTestData {
     public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "user", "restaurant");

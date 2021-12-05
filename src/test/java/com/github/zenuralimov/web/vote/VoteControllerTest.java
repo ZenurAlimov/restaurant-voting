@@ -18,13 +18,13 @@ import java.util.List;
 import static com.github.zenuralimov.util.JsonUtil.writeValue;
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.*;
 import static com.github.zenuralimov.web.user.UserTestData.*;
+import static com.github.zenuralimov.web.vote.VoteController.TIME_LIMIT;
 import static com.github.zenuralimov.web.vote.VoteTestData.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class VoteControllerTest extends AbstractControllerTest {
-    public static final LocalDate TODAY = LocalDate.now();
 
     private static final String REST_URL = VoteController.REST_URL + '/';
 
@@ -54,8 +54,8 @@ class VoteControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = USER_MAIL)
     void getBetween() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + "filter")
-                .param("from", TODAY.toString())
-                .param("to", TODAY.toString()))
+                .param("from", LocalDate.now().toString())
+                .param("to", LocalDate.now().toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.getTos(List.of(vote2))));
@@ -84,17 +84,16 @@ class VoteControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void updateVote() throws Exception {
+    void update() throws Exception {
         Vote updated = VoteTestData.getUpdated();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "?restaurantId=" + MC_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(writeValue(updated)));
-
-        if (LocalTime.now().isAfter(LocalTime.of(11, 0))) {
+        if (LocalTime.now().isAfter(TIME_LIMIT)) {
             action.andExpect(status().isUnprocessableEntity());
         } else {
             action.andDo(print()).andExpect(status().isNoContent());
-            VoteTestData.VOTE_MATCHER.assertMatch(repository.getByDate(USER_ID, TODAY).orElse(null), VoteTestData.getUpdated());
+            VoteTestData.VOTE_MATCHER.assertMatch(repository.getByDate(USER_ID, LocalDate.now()).orElse(null), VoteTestData.getUpdated());
         }
     }
 }

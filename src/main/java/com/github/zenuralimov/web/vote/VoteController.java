@@ -24,11 +24,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
-
-import static com.github.zenuralimov.util.DateUtil.dayOrMax;
-import static com.github.zenuralimov.util.DateUtil.dayOrMin;
-import static com.github.zenuralimov.web.restaurant.RestaurantController.TODAY;
 
 @RestController
 @RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -36,6 +31,7 @@ import static com.github.zenuralimov.web.restaurant.RestaurantController.TODAY;
 @AllArgsConstructor
 @Transactional(readOnly = true)
 public class VoteController {
+    static final LocalTime TIME_LIMIT = LocalTime.of(11, 0);
 
     static final String REST_URL = "/api/votes";
 
@@ -44,45 +40,33 @@ public class VoteController {
     private final RestaurantRepository restaurantRepository;
 
     @GetMapping
-    public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
-        log.info("get All Votes for user {}", authUser.id());
-        return VoteUtil.getTos(voteRepository.getAll(authUser.id()));
-    }
-
-    @GetMapping("/by-restaurantId")
-    public List<VoteTo> getAllByRestaurantId(@AuthenticationPrincipal AuthUser authUser, @RequestParam int restaurantId) {
+    public VoteTo get(@AuthenticationPrincipal AuthUser authUser,
+                            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         int userId = authUser.id();
-        log.info("get Votes for user {} By Restaurant {}", userId, restaurantId);
-        return VoteUtil.getTos(voteRepository.getByRestaurant(userId, restaurantId));
-    }
-
-    @GetMapping("/filter")
-    public List<VoteTo> getBetween(@AuthenticationPrincipal AuthUser authUser,
-                                   @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                   @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        int userId = authUser.id();
-        log.info("votes between dates({} - {}) for user {}", from, to, userId);
-        return VoteUtil.getTos(voteRepository.getBetween(dayOrMin(from), dayOrMax(to), userId));
+        LocalDate voteDate = (date == null) ? LocalDate.now() : date;
+        log.info("vote for user {} by date {}", userId, voteDate);
+        return voteRepository.getByDate(userId, voteDate).map(VoteUtil::createTo).orElseThrow(
+                () -> new IllegalRequestDataException("Vote for date=" + voteDate + " not found"));
     }
 
     @Transactional
     @PostMapping
     public ResponseEntity<VoteTo> createOrUpdate(@AuthenticationPrincipal AuthUser authUser, @RequestParam int restaurantId) {
         int userId = authUser.id();
-        Restaurant restaurant = restaurantRepository.getById(restaurantId);
-        Vote vote = voteRepository.getByDate(userId, TODAY).orElse(
-                new Vote(TODAY, userRepository.getById(userId), restaurant)
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
+                () -> new IllegalRequestDataException("Restaurant with id=" + restaurantId + " not found"));
+        Vote vote = voteRepository.getByDate(userId, LocalDate.now()).orElse(
+                new Vote(LocalDate.now(), userRepository.getById(userId), restaurant)
         );
         if (vote.isNew()) {
             log.info("vote saved for the restaurant {}", restaurantId);
             Vote created = voteRepository.save(vote);
             URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path(REST_URL + "/{id}")
-                    .buildAndExpand(created.getId()).toUri();
+                    .path(REST_URL).buildAndExpand().toUri();
             return ResponseEntity.created(uriOfNewResource).body(VoteUtil.createTo(created));
         }
-        if (LocalTime.now().isAfter(LocalTime.of(11, 0))) {
-            throw new IllegalRequestDataException("Vote can only be changed before 11:00");
+        if (LocalTime.now().isAfter(TIME_LIMIT)) {
+            throw new IllegalRequestDataException("Vote can only be changed before " + TIME_LIMIT);
         }
         if (vote.getRestaurant().id() == restaurantId) {
             log.info("trying to vote for the restaurant {} again", restaurantId);

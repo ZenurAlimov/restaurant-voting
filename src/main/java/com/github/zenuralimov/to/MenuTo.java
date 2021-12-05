@@ -7,15 +7,14 @@ import lombok.Value;
 import java.time.LocalDate;
 
 @Value
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class VoteTo {
+public class MenuTo extends BaseTo {
+
     LocalDate date;
 
-    int restaurantId;
-
-    public VoteTo(LocalDate date, int restaurantId) {
+    public MenuTo(Integer id, LocalDate date) {
+        super(id);
         this.date = date;
-        this.restaurantId = restaurantId;
     }
 }

@@ -1,10 +1,15 @@
 package com.github.zenuralimov.web.menu;
 
+import com.github.zenuralimov.error.IllegalRequestDataException;
 import com.github.zenuralimov.model.Menu;
 import com.github.zenuralimov.repository.MenuRepository;
 import com.github.zenuralimov.repository.RestaurantRepository;
+import com.github.zenuralimov.to.MenuTo;
+import com.github.zenuralimov.util.MenuUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,11 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.LocalDate;
-import java.util.List;
 
-import static com.github.zenuralimov.util.DateUtil.dayOrMax;
-import static com.github.zenuralimov.util.DateUtil.dayOrMin;
 import static com.github.zenuralimov.util.validation.ValidationUtil.assureIdConsistent;
 import static com.github.zenuralimov.util.validation.ValidationUtil.checkNew;
 
@@ -27,53 +28,52 @@ import static com.github.zenuralimov.util.validation.ValidationUtil.checkNew;
 @RequestMapping(value = AdminMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
+@CacheConfig(cacheNames = "restaurants")
 public class AdminMenuController {
 
-    static final String REST_URL = "/api/admin/restaurants/{restaurantId}/menu";
+    static final String REST_URL = "/api/admin/restaurants/{restaurantId}/menus";
 
     private final RestaurantRepository restaurantRepository;
     private final MenuRepository menuRepository;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Menu> get(@PathVariable int restaurantId, @PathVariable int id) {
+    public MenuTo get(@PathVariable int restaurantId, @PathVariable int id) {
         log.info("get menu {} for restaurant {}", id, restaurantId);
-        menuRepository.checkBelong(id, restaurantId);
-        return ResponseEntity.of(menuRepository.get(id, restaurantId));
-    }
-
-    @GetMapping("/filter")
-    public List<Menu> getBetween(@PathVariable int restaurantId,
-                                 @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                 @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        log.info("get All menu for restaurant {} between dates({} - {})", restaurantId, from, to);
-        return menuRepository.getBetween(restaurantId, dayOrMin(from), dayOrMax(to));
+        Menu menu = menuRepository.checkBelong(id, restaurantId);
+        return MenuUtil.createTo(menu);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(allEntries = true)
     public void delete(@PathVariable int restaurantId, @PathVariable int id) {
         log.info("delete menu {} for restaurant {}", id, restaurantId);
         menuRepository.checkBelong(id, restaurantId);
-        menuRepository.delete(id);
+        menuRepository.deleteExisted(id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Menu> createWithLocation(@Valid @RequestBody Menu menu, @PathVariable int restaurantId) {
+    @CacheEvict(allEntries = true)
+    public ResponseEntity<MenuTo> createWithLocation(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
         log.info("add menu to restaurant {}", restaurantId);
-        checkNew(menu);
+        checkNew(menuTo);
+        Menu menu = MenuUtil.rollBackTo(menuTo);
         menu.setRestaurant(restaurantRepository.getById(restaurantId));
         Menu created = menuRepository.save(menu);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(restaurantId, created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        return ResponseEntity.created(uriOfNewResource).body(MenuUtil.createTo(created));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Menu menu, @PathVariable int restaurantId, @PathVariable int id) {
+    @CacheEvict(allEntries = true)
+    public void update(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId, @PathVariable int id) {
         log.info("update menu {} for restaurant {}", id, restaurantId);
-        assureIdConsistent(menu, id);
+        assureIdConsistent(menuTo, id);
+        menuRepository.checkBelong(id, restaurantId);
+        Menu menu = MenuUtil.rollBackTo(menuTo);
         menu.setRestaurant(restaurantRepository.getById(restaurantId));
         menuRepository.save(menu);
     }

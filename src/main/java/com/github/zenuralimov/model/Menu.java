@@ -19,11 +19,11 @@ import java.util.List;
 @ToString(callSuper = true)
 public class Menu extends BaseEntity {
 
-    @Column(name = "date", nullable = false, columnDefinition = "timestamp default now()")
+    @Column(name = "date", nullable = false, columnDefinition = "date default now()")
     @NotNull
     private LocalDate date;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "menu")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "menu")
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/62848296/548473
     @JsonManagedReference
     private List<Dish> dishes;

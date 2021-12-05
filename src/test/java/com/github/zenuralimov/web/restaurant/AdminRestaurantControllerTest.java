@@ -5,6 +5,7 @@ import com.github.zenuralimov.repository.RestaurantRepository;
 import com.github.zenuralimov.util.JsonUtil;
 import com.github.zenuralimov.util.RestaurantUtil;
 import com.github.zenuralimov.web.AbstractControllerTest;
+import com.github.zenuralimov.web.GlobalExceptionHandler;
 import com.github.zenuralimov.web.user.UserTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -53,7 +55,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(REST_TO_MATCHER.contentJson(RestaurantUtil.getTos(List.of(kfc, mc, king))));
+                .andExpect(REST_TO_MATCHER.contentJson(RestaurantUtil.getTos(List.of(king, kfc, mc))));
     }
 
     @Test
@@ -119,26 +121,25 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     @Transactional(propagation = Propagation.NEVER)
-    void createDuplicate() {
+    void createDuplicate() throws Exception {
         Restaurant invalid = new Restaurant(null, kfc.getName());
-        assertThrows(Exception.class, () ->
-                perform(MockMvcRequestBuilders.post(REST_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.writeValue(invalid)))
-                        .andDo(print())
-                        .andExpect(status().isUnprocessableEntity())
-        );
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_RESTAURANT)));
     }
 
     @Test
     @Transactional(propagation = Propagation.NEVER)
-    void updateDuplicate() {
+    void updateDuplicate() throws Exception {
         Restaurant invalid = new Restaurant(KFC_ID, mc.getName());
-        assertThrows(Exception.class, () ->
-                perform(MockMvcRequestBuilders.put(REST_URL + KFC_ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.writeValue(invalid)))
-                        .andDo(print())
-        );
+        perform(MockMvcRequestBuilders.put(REST_URL + KFC_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_RESTAURANT)));
     }
 }

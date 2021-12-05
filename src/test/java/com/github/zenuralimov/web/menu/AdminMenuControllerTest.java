@@ -4,6 +4,7 @@ import com.github.zenuralimov.model.Menu;
 import com.github.zenuralimov.repository.MenuRepository;
 import com.github.zenuralimov.util.JsonUtil;
 import com.github.zenuralimov.web.AbstractControllerTest;
+import com.github.zenuralimov.web.GlobalExceptionHandler;
 import com.github.zenuralimov.web.user.UserTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 
 import static com.github.zenuralimov.web.menu.MenuTestData.*;
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.KFC_ID;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -121,26 +123,27 @@ class AdminMenuControllerTest extends AbstractControllerTest {
 
     @Test
     @Transactional(propagation = Propagation.NEVER)
-    void createDuplicate() {
+    void createDuplicate() throws Exception {
         Menu invalid = new Menu(null, kfc_menu1.getDate());
-        assertThrows(Exception.class, () ->
-                perform(MockMvcRequestBuilders.post(REST_URL, KFC_ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.writeValue(invalid)))
-                        .andDo(print())
-                        .andExpect(status().isUnprocessableEntity())
-        );
+        perform(MockMvcRequestBuilders.post(REST_URL, KFC_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_MENU)));
+
     }
 
     @Test
     @Transactional(propagation = Propagation.NEVER)
-    void updateDuplicate() {
+    void updateDuplicate() throws Exception {
         Menu invalid = new Menu(MENU1_ID, kfc_menu2.getDate());
-        assertThrows(Exception.class, () ->
-                perform(MockMvcRequestBuilders.put(REST_URL + MENU1_ID, KFC_ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.writeValue(invalid)))
-                        .andDo(print())
-        );
+        perform(MockMvcRequestBuilders.put(REST_URL + MENU1_ID, KFC_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_MENU)));
+
     }
 }

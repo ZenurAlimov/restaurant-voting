@@ -31,13 +31,13 @@ spring:
 
   # https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties-cache
   cache:
-    cache-names: users
+    cache-names: restaurants
     caffeine.spec: maximumSize=1,expireAfterAccess=60s
 
 logging:
   level:
     root: WARN
-    ru.javaops.topjava2: DEBUG
+    com.github.zenuralimov: DEBUG
     org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
     org.springframework.cache: TRACE
 

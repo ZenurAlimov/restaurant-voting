@@ -4,6 +4,7 @@ import com.github.zenuralimov.model.Dish;
 import com.github.zenuralimov.repository.DishRepository;
 import com.github.zenuralimov.util.JsonUtil;
 import com.github.zenuralimov.web.AbstractControllerTest;
+import com.github.zenuralimov.web.GlobalExceptionHandler;
 import com.github.zenuralimov.web.user.UserTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.github.zenuralimov.web.dish.DishTestData.*;
 import static com.github.zenuralimov.web.menu.MenuTestData.MENU1_ID;
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.KFC_ID;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -117,26 +119,25 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @Transactional(propagation = Propagation.NEVER)
-    void createDuplicate() {
+    void createDuplicate() throws Exception {
         Dish invalid = new Dish(null, kfc_menu1_dish1.getName(), 300);
-        assertThrows(Exception.class, () ->
-                perform(MockMvcRequestBuilders.post(REST_URL, KFC_ID, MENU1_ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.writeValue(invalid)))
-                        .andDo(print())
-                        .andExpect(status().isUnprocessableEntity())
-        );
+        perform(MockMvcRequestBuilders.post(REST_URL, KFC_ID, MENU1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_DISH)));
     }
 
     @Test
     @Transactional(propagation = Propagation.NEVER)
-    void updateDuplicate() {
+    void updateDuplicate() throws Exception {
         Dish invalid = new Dish(DISH1_ID, kfc_menu1_dish2.getName(), 200);
-        assertThrows(Exception.class, () ->
-                perform(MockMvcRequestBuilders.put(REST_URL + DISH1_ID, KFC_ID, MENU1_ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.writeValue(invalid)))
-                        .andDo(print())
-        );
+        perform(MockMvcRequestBuilders.put(REST_URL + DISH1_ID, KFC_ID, MENU1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_DISH)));
     }
 }

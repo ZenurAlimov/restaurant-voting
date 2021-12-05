@@ -2,7 +2,6 @@ package com.github.zenuralimov.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,7 +16,6 @@ public class Dish extends NamedEntity {
 
     @Column(name = "price", nullable = false, columnDefinition = "int")
     @NotNull
-    @Range(min = 10, max = 1000)
     private Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY)

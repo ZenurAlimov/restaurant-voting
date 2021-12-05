@@ -8,7 +8,7 @@
         <version>2.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.github.ZenurAlimov</groupId>
+    <groupId>com.github.zenuralimov</groupId>
     <artifactId>restaurant-voting</artifactId>
     <version>1.0</version>
 

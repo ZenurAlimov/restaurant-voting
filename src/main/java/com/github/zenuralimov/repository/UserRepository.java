@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface UserRepository extends BaseRepository<User> {
-    @Cacheable("users")
     Optional<User> getByEmail(String email);
 }

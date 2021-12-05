@@ -2,10 +2,12 @@ package com.github.zenuralimov.util;
 
 import com.github.zenuralimov.model.Restaurant;
 import com.github.zenuralimov.to.RestaurantTo;
+import lombok.experimental.UtilityClass;
 
 import java.util.Collection;
 import java.util.List;
 
+@UtilityClass
 public class RestaurantUtil {
     public static List<RestaurantTo> getTos(Collection<Restaurant> restaurants) {
         return restaurants.stream()
@@ -15,5 +17,9 @@ public class RestaurantUtil {
 
     public static RestaurantTo createTo(Restaurant restaurant) {
         return new RestaurantTo(restaurant.id(), restaurant.getName());
+    }
+
+    public static Restaurant rollBackTo(RestaurantTo restaurantTo) {
+        return new Restaurant(restaurantTo.getId(), restaurantTo.getName());
     }
 }

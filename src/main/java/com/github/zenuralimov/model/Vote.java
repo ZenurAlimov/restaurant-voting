@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @ToString(callSuper = true)
 public class Vote extends BaseEntity{
 
-    @Column(name = "date", nullable = false, columnDefinition = "timestamp default now()")
+    @Column(name = "date", nullable = false, columnDefinition = "date default now()")
     @NotNull
     private LocalDate date;
 
@@ -25,6 +25,7 @@ public class Vote extends BaseEntity{
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
+    @NotNull
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
