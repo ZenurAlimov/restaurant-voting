@@ -1,5 +1,5 @@
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/ac226ae60c644f89980ea354b887b211)](https://www.codacy.com/gh/ZenurAlimov/restaurant-voting/dashboard)
-![head-image.jpg](head-image.jpg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/073569ade2ae463ba73eb7faca8ef43a)](https://www.codacy.com/gh/ZenurAlimov/restaurant-voting/dashboard)
+![image](images/head-image.jpg)
 - Spring Boot
 - Spring Data JPA
 - Jackson
@@ -35,6 +35,8 @@ Admin: admin@gmail.com / admin
 
 ## Description:
 ### Аny user can view all restaurants with food for today:
-![swagger-screen-get.jpg](swagger-screen-get.jpg)
-### An authorized user can vote for the selected restaurant:
-![swagger-screen-post.jpg](swagger-screen-post.jpg)
+![image](images/get-all-with-menu.png)
+### Authorized (regular) user can vote for a restaurant:
+![image](images/post-vote.png)
+### Admin can manage restaurants and food:
+![image](images/admin-controllers.png)
