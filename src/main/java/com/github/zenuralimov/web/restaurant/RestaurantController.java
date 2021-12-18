@@ -1,11 +1,11 @@
 package com.github.zenuralimov.web.restaurant;
 
 import com.github.zenuralimov.error.IllegalRequestDataException;
-import com.github.zenuralimov.model.Restaurant;
 import com.github.zenuralimov.repository.RestaurantRepository;
+import com.github.zenuralimov.to.RestaurantTo;
+import com.github.zenuralimov.util.RestaurantUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,15 +28,15 @@ public class RestaurantController {
 
     @GetMapping("/with-menu")
     @Cacheable("restaurants")
-    public List<Restaurant> getAllWithMenuToday() {
+    public List<RestaurantTo> getAllWithMenuToday() {
         log.info("get all restaurants with menu today");
-        return repository.getAllByDateWithMenu(LocalDate.now());
+        return RestaurantUtil.getTos(repository.getAllByDateWithMenu(LocalDate.now()));
     }
 
     @GetMapping("/{id}/with-menu")
-    public Restaurant getByIdWithMenuToday(@PathVariable int id) {
+    public RestaurantTo getByIdWithMenuToday(@PathVariable int id) {
         log.info("get restaurant {} with menu today", id);
-        return repository.getByIdAndDateWithMenu(id, LocalDate.now()).orElseThrow(
-        () -> new IllegalRequestDataException("Entity with id=" + id + " not found"));
+        return repository.getByIdAndDateWithMenu(id, LocalDate.now()).map(RestaurantUtil::createTo).orElseThrow(
+        () -> new IllegalRequestDataException("Restaurant with id=" + id + " not found"));
     }
 }

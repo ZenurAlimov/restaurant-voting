@@ -20,7 +20,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -32,13 +31,12 @@ import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.M
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String EXCEPTION_DUPLICATE_EMAIL = "User with this email already exists";
     public static final String EXCEPTION_DUPLICATE_RESTAURANT = "Restaurant with this name already exists";
-    public static final String EXCEPTION_DUPLICATE_MENU = "Menu with this date in this restaurant already exists";
-    public static final String EXCEPTION_DUPLICATE_DISH = "Dish with this name in this menu already exists";
+    public static final String EXCEPTION_DUPLICATE_DISH = "Dish with this name in this restaurant already exists today";
+    public static final String EXCEPTION_UPDATE_VOTE = "Vote can only be changed before ";
 
     private static final Map<String, String> CONSTRAINS_MAP = Map.of(
             "restaurant_unique_name_idx", EXCEPTION_DUPLICATE_RESTAURANT,
-            "menu_unique_restaurant_date_idx", EXCEPTION_DUPLICATE_MENU,
-            "dish_unique_menu_name_idx", EXCEPTION_DUPLICATE_DISH);
+            "dish_unique_name_restaurant_date_idx", EXCEPTION_DUPLICATE_DISH);
 
     private final ErrorAttributes errorAttributes;
 

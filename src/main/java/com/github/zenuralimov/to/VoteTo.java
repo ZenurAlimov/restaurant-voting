@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode
 @ToString(callSuper = true)
 public class VoteTo {
+
     LocalDate date;
 
     int restaurantId;

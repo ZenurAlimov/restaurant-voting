@@ -16,10 +16,6 @@ public class RestaurantUtil {
     }
 
     public static RestaurantTo createTo(Restaurant restaurant) {
-        return new RestaurantTo(restaurant.id(), restaurant.getName());
-    }
-
-    public static Restaurant rollBackTo(RestaurantTo restaurantTo) {
-        return new Restaurant(restaurantTo.getId(), restaurantTo.getName());
+        return new RestaurantTo(restaurant.id(), restaurant.getName(), DishUtil.getTos(restaurant.getDishes()));
     }
 }

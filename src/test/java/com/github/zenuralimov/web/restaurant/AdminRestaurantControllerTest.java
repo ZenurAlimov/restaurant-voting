@@ -3,7 +3,6 @@ package com.github.zenuralimov.web.restaurant;
 import com.github.zenuralimov.model.Restaurant;
 import com.github.zenuralimov.repository.RestaurantRepository;
 import com.github.zenuralimov.util.JsonUtil;
-import com.github.zenuralimov.util.RestaurantUtil;
 import com.github.zenuralimov.web.AbstractControllerTest;
 import com.github.zenuralimov.web.GlobalExceptionHandler;
 import com.github.zenuralimov.web.user.UserTestData;
@@ -20,7 +19,6 @@ import java.util.List;
 
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.*;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,7 +37,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(REST_TO_MATCHER.contentJson(RestaurantUtil.createTo(kfc)));
+                .andExpect(REST_MATCHER.contentJson(kfc));
     }
 
     @Test
@@ -55,14 +53,14 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(REST_TO_MATCHER.contentJson(RestaurantUtil.getTos(List.of(king, kfc, mc))));
+                .andExpect(REST_MATCHER.contentJson(List.of(king, kfc, mc)));
     }
 
     @Test
     void delete() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + KFC_ID))
-                .andExpect(status().isNoContent());
-        assertFalse(restaurantRepository.findById(KFC_ID).isPresent());
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

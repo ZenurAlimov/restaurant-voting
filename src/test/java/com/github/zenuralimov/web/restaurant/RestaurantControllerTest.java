@@ -1,5 +1,6 @@
 package com.github.zenuralimov.web.restaurant;
 
+import com.github.zenuralimov.util.RestaurantUtil;
 import com.github.zenuralimov.web.AbstractControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -8,7 +9,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
-import static com.github.zenuralimov.web.menu.MenuTestData.*;
+import static com.github.zenuralimov.web.dish.DishTestData.*;
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.*;
 import static com.github.zenuralimov.web.user.UserTestData.USER_MAIL;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -22,25 +23,25 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     void getByIdWithMenuToday() throws Exception {
-        mc.setMenus(List.of(mc_menu2));
+        mc.setDishes(mc_menu2_dishes);
 
         perform(MockMvcRequestBuilders.get(REST_URL + MC_ID + "/with-menu"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(REST_MATCHER.contentJson(mc));
+                .andExpect(REST_TO_MATCHER.contentJson(RestaurantUtil.createTo(mc)));
     }
 
     @Test
     void getAllWithMenuToday() throws Exception {
-        kfc.setMenus(List.of(kfc_menu2));
-        mc.setMenus(List.of(mc_menu2));
-        king.setMenus(List.of(king_menu2));
+        kfc.setDishes(kfc_menu2_dishes);
+        mc.setDishes(mc_menu2_dishes);
+        king.setDishes(king_menu2_dishes);
 
         perform(MockMvcRequestBuilders.get(REST_URL + "with-menu"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(REST_MATCHER.contentJson(List.of(kfc, mc, king)));
+                .andExpect(REST_TO_MATCHER.contentJson(RestaurantUtil.getTos(List.of(king, kfc, mc))));
     }
 }

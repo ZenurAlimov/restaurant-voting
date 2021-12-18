@@ -1,5 +1,5 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ac226ae60c644f89980ea354b887b211)](https://www.codacy.com/gh/ZenurAlimov/restaurant-voting/dashboard)
-![logo.jpg](logo.jpg)
+![head-image.jpg](head-image.jpg)
 - Spring Boot
 - Spring Data JPA
 - Jackson
@@ -9,6 +9,8 @@
 - Swagger/ OpenAPI 3.0
 -----------------------------------------------------
 The task is:
+
+Design and implement a REST API without frontend.
 
 Build a voting system for deciding where to have lunch.
 
@@ -30,3 +32,9 @@ Credentials:
 User:  user@yandex.ru / password
 Admin: admin@gmail.com / admin
 ```
+
+## Description:
+### Аny user can view all restaurants with food for today
+![swagger-screen-get.jpg](swagger-screen-get.jpg)
+### An authorized user can vote for the selected restaurant
+![swagger-screen-get.jpg](swagger-screen-get.jpg)

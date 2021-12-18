@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString(callSuper = true)
-public class Vote extends BaseEntity{
+public class Vote extends BaseEntity {
 
     @Column(name = "date", nullable = false, columnDefinition = "date default now()")
     @NotNull

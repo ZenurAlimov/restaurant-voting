@@ -7,6 +7,7 @@ import com.github.zenuralimov.repository.RestaurantRepository;
 import com.github.zenuralimov.repository.UserRepository;
 import com.github.zenuralimov.repository.VoteRepository;
 import com.github.zenuralimov.to.VoteTo;
+import com.github.zenuralimov.util.TimeUtil;
 import com.github.zenuralimov.util.VoteUtil;
 import com.github.zenuralimov.web.AuthUser;
 import lombok.AllArgsConstructor;
@@ -25,13 +26,15 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static com.github.zenuralimov.util.TimeUtil.getTimeLimit;
+import static com.github.zenuralimov.web.GlobalExceptionHandler.EXCEPTION_UPDATE_VOTE;
+
 @RestController
 @RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
 @Transactional(readOnly = true)
 public class VoteController {
-    static final LocalTime TIME_LIMIT = LocalTime.of(11, 0);
 
     static final String REST_URL = "/api/votes";
 
@@ -41,7 +44,7 @@ public class VoteController {
 
     @GetMapping
     public VoteTo get(@AuthenticationPrincipal AuthUser authUser,
-                            @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+                      @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         int userId = authUser.id();
         LocalDate voteDate = (date == null) ? LocalDate.now() : date;
         log.info("vote for user {} by date {}", userId, voteDate);
@@ -51,10 +54,12 @@ public class VoteController {
 
     @Transactional
     @PostMapping
-    public ResponseEntity<VoteTo> createOrUpdate(@AuthenticationPrincipal AuthUser authUser, @RequestParam int restaurantId) {
+    public ResponseEntity<VoteTo> createOrUpdate(@AuthenticationPrincipal AuthUser authUser,
+                                                 @RequestParam int restaurantId) {
         int userId = authUser.id();
         Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(
-                () -> new IllegalRequestDataException("Restaurant with id=" + restaurantId + " not found"));
+                () -> new IllegalRequestDataException("Restaurant with id=" + restaurantId + " not found")
+        );
         Vote vote = voteRepository.getByDate(userId, LocalDate.now()).orElse(
                 new Vote(LocalDate.now(), userRepository.getById(userId), restaurant)
         );
@@ -65,13 +70,13 @@ public class VoteController {
                     .path(REST_URL).buildAndExpand().toUri();
             return ResponseEntity.created(uriOfNewResource).body(VoteUtil.createTo(created));
         }
-        if (LocalTime.now().isAfter(TIME_LIMIT)) {
-            throw new IllegalRequestDataException("Vote can only be changed before " + TIME_LIMIT);
+        if (!LocalTime.now().isBefore(getTimeLimit())) {
+            throw new IllegalRequestDataException(EXCEPTION_UPDATE_VOTE + TimeUtil.toString(getTimeLimit()));
         }
         if (vote.getRestaurant().id() == restaurantId) {
             log.info("trying to vote for the restaurant {} again", restaurantId);
         } else {
-            log.info("userId {} changed vote for the restaurant {}", userId, restaurantId);
+            log.info("user {} changed vote for the restaurant {}", userId, restaurantId);
             vote.setRestaurant(restaurant);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

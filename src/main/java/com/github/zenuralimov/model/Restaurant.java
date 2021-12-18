@@ -1,6 +1,6 @@
 package com.github.zenuralimov.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -18,9 +18,10 @@ public class Restaurant extends NamedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
-    @JsonManagedReference
+    @JsonIgnore
     @ToString.Exclude
-    private List<Menu> menus;
+    @OrderBy("price DESC")
+    private List<Dish> dishes;
 
     public Restaurant(Integer id, String name) {
         super(id, name);

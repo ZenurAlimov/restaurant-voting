@@ -5,9 +5,10 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "dish", uniqueConstraints = @UniqueConstraint(columnNames = {"menu_id", "name"}, name = "dish_unique_menu_name_idx"))
+@Table(name = "dish", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "restaurant_id", "date"}, name = "dish_unique_name_restaurant_date_idx"))
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,14 +19,24 @@ public class Dish extends NamedEntity {
     @NotNull
     private Integer price;
 
+    @Column(name = "date", nullable = false, columnDefinition = "date default now()")
+    @NotNull
+    private LocalDate date;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", nullable = false)
+    @JoinColumn(name = "restaurant_id", nullable = false)
     @JsonBackReference
     @ToString.Exclude
-    private Menu menu;
+    private Restaurant restaurant;
 
     public Dish(Integer id, String name, Integer price) {
         super(id, name);
         this.price = price;
+    }
+
+    public Dish(Integer id, String name, Integer price, LocalDate date) {
+        super(id, name);
+        this.price = price;
+        this.date = date;
     }
 }

@@ -1,7 +1,6 @@
 package com.github.zenuralimov.repository;
 
 import com.github.zenuralimov.model.User;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;

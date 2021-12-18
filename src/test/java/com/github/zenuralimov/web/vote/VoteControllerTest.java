@@ -1,25 +1,27 @@
 package com.github.zenuralimov.web.vote;
 
-import com.github.zenuralimov.model.Vote;
 import com.github.zenuralimov.repository.VoteRepository;
+import com.github.zenuralimov.to.VoteTo;
+import com.github.zenuralimov.util.TimeUtil;
 import com.github.zenuralimov.util.VoteUtil;
 import com.github.zenuralimov.web.AbstractControllerTest;
+import com.github.zenuralimov.web.GlobalExceptionHandler;
+import com.github.zenuralimov.web.user.UserTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 
-import static com.github.zenuralimov.util.JsonUtil.writeValue;
+import static com.github.zenuralimov.util.TimeUtil.getTimeLimit;
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.*;
 import static com.github.zenuralimov.web.user.UserTestData.*;
-import static com.github.zenuralimov.web.vote.VoteController.TIME_LIMIT;
 import static com.github.zenuralimov.web.vote.VoteTestData.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,67 +35,50 @@ class VoteControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
+    void get() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                .param("date", LocalDate.now().minusDays(1).toString()))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.getTos(userVotes)));
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void getAllByRestaurantId() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "by-restaurantId" + "?restaurantId=" + KFC_ID))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.getTos(List.of(vote1))));
-    }
-
-    @Test
-    @WithUserDetails(value = USER_MAIL)
-    void getBetween() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
-                .param("from", LocalDate.now().toString())
-                .param("to", LocalDate.now().toString()))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.getTos(List.of(vote2))));
-    }
-
-    @Test
-    void getUnAuth() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
-                .andExpect(status().isUnauthorized());
+                .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.createTo(vote1)));
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
-    void createWithLocation() throws Exception {
-        Vote newVote = VoteTestData.getNew();
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "?restaurantId=" + KING_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(writeValue(newVote)));
+    void create() throws Exception {
+        VoteTo newVote = VoteTestData.getNew();
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", String.valueOf(KING_ID)))
+                .andDo(print())
+                .andExpect(status().isCreated());
 
-        Vote created = VoteTestData.VOTE_MATCHER.readFromJson(action);
-        int newId = created.id();
-        newVote.setId(newId);
-        VoteTestData.VOTE_MATCHER.assertMatch(created, newVote);
-        VoteTestData.VOTE_MATCHER.assertMatch(repository.getById(newId), newVote);
+        VoteTo created = repository.getByDate(UserTestData.ADMIN_ID, LocalDate.now()).map(VoteUtil::createTo).orElse(null);
+        VoteTestData.VOTE_TO_MATCHER.assertMatch(created, newVote);
     }
 
     @Test
     @WithUserDetails(value = USER_MAIL)
-    void update() throws Exception {
-        Vote updated = VoteTestData.getUpdated();
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "?restaurantId=" + MC_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(writeValue(updated)));
-        if (LocalTime.now().isAfter(TIME_LIMIT)) {
-            action.andExpect(status().isUnprocessableEntity());
-        } else {
-            action.andDo(print()).andExpect(status().isNoContent());
-            VoteTestData.VOTE_MATCHER.assertMatch(repository.getByDate(USER_ID, LocalDate.now()).orElse(null), VoteTestData.getUpdated());
-        }
+    void updateBefore() throws Exception {
+        VoteTo updated = VoteTestData.getUpdated();
+        TimeUtil.setTimeLimit(LocalTime.now().plusSeconds(1));
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", String.valueOf(MC_ID)))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        VoteTestData.VOTE_TO_MATCHER.assertMatch(repository.getByDate(UserTestData.USER_ID, LocalDate.now()).map(VoteUtil::createTo).orElse(null), updated);
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void updateAfter() throws Exception {
+        LocalTime localTime = LocalTime.now();
+        TimeUtil.setTimeLimit(localTime);
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", String.valueOf(MC_ID)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(containsString(GlobalExceptionHandler.EXCEPTION_UPDATE_VOTE + TimeUtil.toString(getTimeLimit()))));
     }
 }

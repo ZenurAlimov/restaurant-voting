@@ -7,46 +7,38 @@ VALUES ('USER', 1),
        ('ADMIN', 2),
        ('USER', 2);
 
-INSERT INTO RESTAURANT (NAME)
+INSERT INTO RESTAURANT (name)
 VALUES ('KFC'),
        ('McDonalds'),
        ('BurgerKing');
 
-INSERT INTO MENU (DATE, RESTAURANT_ID)
-VALUES (CURRENT_DATE - 1, 1),
-       (CURRENT_DATE - 1, 2),
-       (CURRENT_DATE - 1, 3),
-       (CURRENT_DATE, 1),
-       (CURRENT_DATE, 2),
-       (CURRENT_DATE, 3);
+INSERT INTO DISH (name, price, date, restaurant_id)
+VALUES ('Chicken wings', 120, CURRENT_DATE - 1, 1),
+       ('Burger', 120, CURRENT_DATE - 1, 1),
+       ('Coke', 90, CURRENT_DATE - 1, 1),
+       ('Sauce', 30, CURRENT_DATE - 1, 1),
+       ('Cheeseburger', 120, CURRENT_DATE - 1, 2),
+       ('Mustard', 30, CURRENT_DATE - 1, 2),
+       ('Chips', 90, CURRENT_DATE - 1, 2),
+       ('Soda', 70, CURRENT_DATE - 1, 2),
+       ('Buffalo wings', 120, CURRENT_DATE - 1, 3),
+       ('French fries', 130, CURRENT_DATE - 1, 3),
+       ('Mayo', 30, CURRENT_DATE - 1, 3),
+       ('Ice cream', 80, CURRENT_DATE - 1, 3),
+       ('Hamburger', 130, CURRENT_DATE, 1),
+       ('Hot-dog', 110, CURRENT_DATE, 1),
+       ('Mayonnaise', 30, CURRENT_DATE, 1),
+       ('Milkshake', 80, CURRENT_DATE, 1),
+       ('Nachos with cheese', 110, CURRENT_DATE, 2),
+       ('Onion rings', 80, CURRENT_DATE, 2),
+       ('Pizza', 100, CURRENT_DATE, 2),
+       ('Popcorn', 50, CURRENT_DATE, 2),
+       ('Fish and chips', 120, CURRENT_DATE, 3),
+       ('Sandwich', 110, CURRENT_DATE, 3),
+       ('Sauce', 50, CURRENT_DATE, 3),
+       ('Wrap', 120, CURRENT_DATE, 3);
 
-INSERT INTO DISH (name, price, menu_id)
-VALUES ('Chicken wings', 120, 1),
-       ('Burger', 120, 1),
-       ('Coke', 90, 1),
-       ('Sauce', 30, 1),
-       ('Cheeseburger', 120, 2),
-       ('Mustard', 30, 2),
-       ('Chips', 90, 2),
-       ('Soda', 70, 2),
-       ('Buffalo wings', 120, 3),
-       ('French fries', 130, 3),
-       ('Mayo', 30, 3),
-       ('Ice cream', 80, 3),
-       ('Hamburger', 130, 4),
-       ('Hot-dog', 110, 4),
-       ('Mayonnaise', 30, 4),
-       ('Milkshake', 80, 4),
-       ('Nachos with cheese', 110, 5),
-       ('Onion rings', 80, 5),
-       ('Pizza', 100, 5),
-       ('Popcorn', 50, 5),
-       ('Fish and chips', 120, 6),
-       ('Sandwich', 110, 6),
-       ('Sauce', 50, 6),
-       ('Wrap', 120, 6);
-
-INSERT INTO VOTE (DATE, RESTAURANT_ID, USER_ID)
+INSERT INTO VOTE (date, restaurant_id, user_id)
 VALUES (CURRENT_DATE - 1, 1, 1),
        (CURRENT_DATE, 3, 1),
        (CURRENT_DATE - 1, 2, 2);
