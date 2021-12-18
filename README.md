@@ -34,7 +34,7 @@ Admin: admin@gmail.com / admin
 ```
 
 ## Description:
-### Аny user can view all restaurants with food for today
+### Аny user can view all restaurants with food for today:
 ![swagger-screen-get.jpg](swagger-screen-get.jpg)
-### An authorized user can vote for the selected restaurant
-![swagger-screen-get.jpg](swagger-screen-get.jpg)
+### An authorized user can vote for the selected restaurant:
+![swagger-screen-post.jpg](swagger-screen-post.jpg)
