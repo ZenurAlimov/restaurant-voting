@@ -34,9 +34,9 @@ Admin: admin@gmail.com / admin
 ```
 
 ## Description:
-### Аny user can view all restaurants with food for today:
+### 1. Аny user can view all restaurants with food for today:
 ![image](images/get-all-with-menu.png)
-### Authorized (regular) user can vote for a restaurant:
+### 2. Authorized (regular) user can vote for a restaurant:
 ![image](images/post-vote.png)
-### Admin can manage restaurants and food:
+### 3. Admin can manage restaurants and food:
 ![image](images/admin-controllers.png)
