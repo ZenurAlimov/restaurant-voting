@@ -79,7 +79,7 @@ public class AdminDishController {
                                                    @PathVariable int restaurantId) {
         log.info("add dish {} to restaurant {}", dishTo, restaurantId);
         checkNew(dishTo);
-        Dish dish = DishUtil.rollBackTo(dishTo);
+        Dish dish = DishUtil.toEntity(dishTo);
         dish.setRestaurant(restaurantRepository.getById(restaurantId));
         dish.setDate(LocalDate.now());
         Dish created = dishRepository.save(dish);
@@ -99,7 +99,7 @@ public class AdminDishController {
         log.info("update dish {} for restaurant {}", id, restaurantId);
         assureIdConsistent(dishTo, id);
         dishRepository.checkBelong(id, restaurantId);
-        Dish dish = DishUtil.rollBackTo(dishTo);
+        Dish dish = DishUtil.toEntity(dishTo);
         dish.setRestaurant(restaurantRepository.getById(restaurantId));
         dish.setDate(LocalDate.now());
         dishRepository.save(dish);

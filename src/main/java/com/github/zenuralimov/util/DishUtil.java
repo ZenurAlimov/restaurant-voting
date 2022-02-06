@@ -19,7 +19,7 @@ public class DishUtil {
         return new DishTo(dish.id(), dish.getName(), dish.getPrice());
     }
 
-    public static Dish rollBackTo(DishTo dishTo) {
+    public static Dish toEntity(DishTo dishTo) {
         return new Dish(dishTo.getId(), dishTo.getName(), dishTo.getPrice());
     }
 }
