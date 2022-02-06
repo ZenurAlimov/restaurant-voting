@@ -25,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import static com.github.zenuralimov.util.TimeUtil.getTimeLimit;
 import static com.github.zenuralimov.web.GlobalExceptionHandler.EXCEPTION_UPDATE_VOTE;
@@ -33,7 +34,6 @@ import static com.github.zenuralimov.web.GlobalExceptionHandler.EXCEPTION_UPDATE
 @RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
-@Transactional(readOnly = true)
 public class VoteController {
 
     static final String REST_URL = "/api/votes";
@@ -43,6 +43,12 @@ public class VoteController {
     private final RestaurantRepository restaurantRepository;
 
     @GetMapping
+    public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
+        log.info("get All Votes for user {}", authUser.id());
+        return VoteUtil.getTos(voteRepository.getAll(authUser.id()));
+    }
+
+    @GetMapping("/by-date")
     public VoteTo get(@AuthenticationPrincipal AuthUser authUser,
                       @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         int userId = authUser.id();
