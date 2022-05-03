@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 import static com.github.zenuralimov.util.TimeUtil.getTimeLimit;
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.*;
@@ -35,8 +34,18 @@ class VoteControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
+    void getAll() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.getTos(userVotes)));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL)
+        perform(MockMvcRequestBuilders.get(REST_URL + "/by-date")
                 .param("date", LocalDate.now().minusDays(1).toString()))
                 .andExpect(status().isOk())
                 .andDo(print())

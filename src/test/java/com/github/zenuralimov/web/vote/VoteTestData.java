@@ -5,13 +5,14 @@ import com.github.zenuralimov.to.VoteTo;
 import com.github.zenuralimov.web.MatcherFactory;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.*;
 import static com.github.zenuralimov.web.user.UserTestData.admin;
 import static com.github.zenuralimov.web.user.UserTestData.user;
 
 public class VoteTestData {
-    public static MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class, "");
+    public static MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class);
 
     public static final int VOTE1_ID = 1;
     public static final int ADMIN_VOTE_ID = 3;
@@ -28,6 +29,8 @@ public class VoteTestData {
         vote3.setUser(admin);
         vote3.setRestaurant(mc);
     }
+
+    public static final List<Vote> userVotes = List.of(vote2, vote1);
 
     public static VoteTo getNew() {
         return new VoteTo(LocalDate.now(), KING_ID);
