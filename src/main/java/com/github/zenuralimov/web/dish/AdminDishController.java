@@ -5,7 +5,7 @@ import com.github.zenuralimov.model.Dish;
 import com.github.zenuralimov.repository.DishRepository;
 import com.github.zenuralimov.repository.RestaurantRepository;
 import com.github.zenuralimov.to.DishTo;
-import com.github.zenuralimov.util.DishUtil;
+import com.github.zenuralimov.util.CommonMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
@@ -38,6 +38,7 @@ public class AdminDishController {
 
     private final RestaurantRepository restaurantRepository;
     private final DishRepository dishRepository;
+    private final CommonMapper commonMapper;
 
     @GetMapping("/{id}")
     public Dish get(@PathVariable int id,
@@ -50,7 +51,7 @@ public class AdminDishController {
     public List<DishTo> getAllByRestaurantAndDate(@PathVariable int restaurantId,
                              @RequestParam @Nullable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         log.info("get All dishes for restaurant {} by date {}", restaurantId, date);
-        return DishUtil.getTos(dishRepository.getAllByDate(restaurantId, date == null ? LocalDate.now() : date));
+        return commonMapper.getDishTos(dishRepository.getAllByDate(restaurantId, date == null ? LocalDate.now() : date));
     }
 
     @GetMapping
@@ -79,7 +80,7 @@ public class AdminDishController {
                                                    @PathVariable int restaurantId) {
         log.info("add dish {} to restaurant {}", dishTo, restaurantId);
         checkNew(dishTo);
-        Dish dish = DishUtil.toEntity(dishTo);
+        Dish dish = commonMapper.toEntity(dishTo);
         dish.setRestaurant(restaurantRepository.getById(restaurantId));
         dish.setDate(LocalDate.now());
         Dish created = dishRepository.save(dish);
@@ -99,7 +100,7 @@ public class AdminDishController {
         log.info("update dish {} for restaurant {}", id, restaurantId);
         assureIdConsistent(dishTo, id);
         dishRepository.checkBelong(id, restaurantId);
-        Dish dish = DishUtil.toEntity(dishTo);
+        Dish dish = commonMapper.toEntity(dishTo);
         dish.setRestaurant(restaurantRepository.getById(restaurantId));
         dish.setDate(LocalDate.now());
         dishRepository.save(dish);

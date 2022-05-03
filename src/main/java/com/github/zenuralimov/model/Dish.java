@@ -1,6 +1,7 @@
 package com.github.zenuralimov.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.github.zenuralimov.util.Default;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,6 +30,7 @@ public class Dish extends NamedEntity {
     @ToString.Exclude
     private Restaurant restaurant;
 
+    @Default
     public Dish(Integer id, String name, Integer price) {
         super(id, name);
         this.price = price;

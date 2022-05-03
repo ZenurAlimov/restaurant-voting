@@ -3,7 +3,7 @@ package com.github.zenuralimov.web.restaurant;
 import com.github.zenuralimov.error.IllegalRequestDataException;
 import com.github.zenuralimov.repository.RestaurantRepository;
 import com.github.zenuralimov.to.RestaurantTo;
-import com.github.zenuralimov.util.RestaurantUtil;
+import com.github.zenuralimov.util.CommonMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,18 +25,19 @@ public class RestaurantController {
     static final String REST_URL = "/api/restaurants";
 
     private final RestaurantRepository repository;
+    private final CommonMapper commonMapper;
 
     @GetMapping("/with-menu")
     @Cacheable("restaurants")
     public List<RestaurantTo> getAllWithMenuToday() {
         log.info("get all restaurants with menu today");
-        return RestaurantUtil.getTos(repository.getAllByDateWithMenu(LocalDate.now()));
+        return commonMapper.getRestaurantTos(repository.getAllByDateWithMenu(LocalDate.now()));
     }
 
     @GetMapping("/{id}/with-menu")
     public RestaurantTo getByIdWithMenuToday(@PathVariable int id) {
         log.info("get restaurant {} with menu today", id);
-        return repository.getByIdAndDateWithMenu(id, LocalDate.now()).map(RestaurantUtil::createTo).orElseThrow(
+        return repository.getByIdAndDateWithMenu(id, LocalDate.now()).map(commonMapper::createTo).orElseThrow(
         () -> new IllegalRequestDataException("Restaurant with id=" + id + " not found"));
     }
 }

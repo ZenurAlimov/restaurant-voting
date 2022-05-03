@@ -2,11 +2,9 @@ package com.github.zenuralimov.web.dish;
 
 import com.github.zenuralimov.model.Dish;
 import com.github.zenuralimov.repository.DishRepository;
-import com.github.zenuralimov.util.DishUtil;
 import com.github.zenuralimov.util.JsonUtil;
 import com.github.zenuralimov.web.AbstractControllerTest;
 import com.github.zenuralimov.web.GlobalExceptionHandler;
-import com.github.zenuralimov.web.user.UserTestData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -21,13 +19,14 @@ import java.util.List;
 
 import static com.github.zenuralimov.web.dish.DishTestData.*;
 import static com.github.zenuralimov.web.restaurant.RestaurantTestData.KFC_ID;
+import static com.github.zenuralimov.web.user.UserTestData.ADMIN_MAIL;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WithUserDetails(value = UserTestData.ADMIN_MAIL)
+@WithUserDetails(value = ADMIN_MAIL)
 class AdminDishControllerTest extends AbstractControllerTest {
 
     static final String REST_URL = AdminDishController.REST_URL + '/';
@@ -51,7 +50,7 @@ class AdminDishControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_TO_MATCHER.contentJson(DishUtil.getTos(kfc_menu1_dishes)));
+                .andExpect(DISH_TO_MATCHER.contentJson(commonMapper.getDishTos(kfc_menu1_dishes)));
     }
 
     @Test

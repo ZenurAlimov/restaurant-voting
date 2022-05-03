@@ -3,7 +3,6 @@ package com.github.zenuralimov.web.vote;
 import com.github.zenuralimov.repository.VoteRepository;
 import com.github.zenuralimov.to.VoteTo;
 import com.github.zenuralimov.util.TimeUtil;
-import com.github.zenuralimov.util.VoteUtil;
 import com.github.zenuralimov.web.AbstractControllerTest;
 import com.github.zenuralimov.web.GlobalExceptionHandler;
 import com.github.zenuralimov.web.user.UserTestData;
@@ -17,8 +16,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static com.github.zenuralimov.util.TimeUtil.getTimeLimit;
-import static com.github.zenuralimov.web.restaurant.RestaurantTestData.*;
-import static com.github.zenuralimov.web.user.UserTestData.*;
+import static com.github.zenuralimov.web.restaurant.RestaurantTestData.KING_ID;
+import static com.github.zenuralimov.web.restaurant.RestaurantTestData.MC_ID;
+import static com.github.zenuralimov.web.user.UserTestData.ADMIN_MAIL;
+import static com.github.zenuralimov.web.user.UserTestData.USER_MAIL;
 import static com.github.zenuralimov.web.vote.VoteTestData.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,7 +40,7 @@ class VoteControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.getTos(userVotes)));
+                .andExpect(VOTE_TO_MATCHER.contentJson(commonMapper.getVoteTos(userVotes)));
     }
 
     @Test
@@ -50,7 +51,7 @@ class VoteControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(VOTE_TO_MATCHER.contentJson(VoteUtil.createTo(vote1)));
+                .andExpect(VOTE_TO_MATCHER.contentJson(commonMapper.createTo(vote1)));
     }
 
     @Test
@@ -62,7 +63,7 @@ class VoteControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-        VoteTo created = repository.getByDate(UserTestData.ADMIN_ID, LocalDate.now()).map(VoteUtil::createTo).orElse(null);
+        VoteTo created = repository.getByDate(UserTestData.ADMIN_ID, LocalDate.now()).map(commonMapper::createTo).orElse(null);
         VoteTestData.VOTE_TO_MATCHER.assertMatch(created, newVote);
     }
 
@@ -76,7 +77,7 @@ class VoteControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        VoteTestData.VOTE_TO_MATCHER.assertMatch(repository.getByDate(UserTestData.USER_ID, LocalDate.now()).map(VoteUtil::createTo).orElse(null), updated);
+        VoteTestData.VOTE_TO_MATCHER.assertMatch(repository.getByDate(UserTestData.USER_ID, LocalDate.now()).map(commonMapper::createTo).orElse(null), updated);
     }
 
     @Test

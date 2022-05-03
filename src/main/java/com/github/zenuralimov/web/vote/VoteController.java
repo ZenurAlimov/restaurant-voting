@@ -7,8 +7,8 @@ import com.github.zenuralimov.repository.RestaurantRepository;
 import com.github.zenuralimov.repository.UserRepository;
 import com.github.zenuralimov.repository.VoteRepository;
 import com.github.zenuralimov.to.VoteTo;
+import com.github.zenuralimov.util.CommonMapper;
 import com.github.zenuralimov.util.TimeUtil;
-import com.github.zenuralimov.util.VoteUtil;
 import com.github.zenuralimov.web.AuthUser;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,11 +41,12 @@ public class VoteController {
     private final VoteRepository voteRepository;
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
+    private final CommonMapper commonMapper;
 
     @GetMapping
     public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
         log.info("get All Votes for user {}", authUser.id());
-        return VoteUtil.getTos(voteRepository.getAll(authUser.id()));
+        return commonMapper.getVoteTos(voteRepository.getAll(authUser.id()));
     }
 
     @GetMapping("/by-date")
@@ -54,7 +55,7 @@ public class VoteController {
         int userId = authUser.id();
         LocalDate voteDate = (date == null) ? LocalDate.now() : date;
         log.info("vote for user {} by date {}", userId, voteDate);
-        return voteRepository.getByDate(userId, voteDate).map(VoteUtil::createTo).orElseThrow(
+        return voteRepository.getByDate(userId, voteDate).map(commonMapper::createTo).orElseThrow(
                 () -> new IllegalRequestDataException("Vote for date=" + voteDate + " not found"));
     }
 
@@ -74,7 +75,7 @@ public class VoteController {
             Vote created = voteRepository.save(vote);
             URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path(REST_URL).buildAndExpand().toUri();
-            return ResponseEntity.created(uriOfNewResource).body(VoteUtil.createTo(created));
+            return ResponseEntity.created(uriOfNewResource).body(commonMapper.createTo(created));
         }
         if (!LocalTime.now().isBefore(getTimeLimit())) {
             throw new IllegalRequestDataException(EXCEPTION_UPDATE_VOTE + TimeUtil.toString(getTimeLimit()));

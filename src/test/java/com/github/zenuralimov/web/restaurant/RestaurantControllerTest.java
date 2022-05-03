@@ -1,6 +1,5 @@
 package com.github.zenuralimov.web.restaurant;
 
-import com.github.zenuralimov.util.RestaurantUtil;
 import com.github.zenuralimov.web.AbstractControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -29,7 +28,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(REST_TO_MATCHER.contentJson(RestaurantUtil.createTo(mc)));
+                .andExpect(REST_TO_MATCHER.contentJson(commonMapper.createTo(mc)));
     }
 
     @Test
@@ -42,6 +41,6 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(REST_TO_MATCHER.contentJson(RestaurantUtil.getTos(List.of(king, kfc, mc))));
+                .andExpect(REST_TO_MATCHER.contentJson(commonMapper.getRestaurantTos(List.of(king, kfc, mc))));
     }
 }
