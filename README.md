@@ -4,6 +4,7 @@
 - Spring Data JPA
 - Jackson
 - Lombok
+- Mapstruct
 - H2 Database
 - JUnit 5
 - Swagger/ OpenAPI 3.0
