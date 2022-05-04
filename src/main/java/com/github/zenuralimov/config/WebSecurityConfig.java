@@ -3,6 +3,7 @@ package com.github.zenuralimov.config;
 import com.github.zenuralimov.model.Role;
 import com.github.zenuralimov.model.User;
 import com.github.zenuralimov.repository.UserRepository;
+import com.github.zenuralimov.web.AuthUser;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import com.github.zenuralimov.web.AuthUser;
 
 import java.util.Optional;
 
@@ -31,18 +31,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserRepository userRepository;
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return email -> {
-            log.debug("Authenticating '{}'", email);
-            Optional<User> optionalUser = userRepository.getByEmail(email);
-            return new AuthUser(optionalUser.orElseThrow(
-                    () -> new UsernameNotFoundException("User '" + email + "' was not found")));
-        };
+    @Override
+    public UserDetailsService userDetailsServiceBean() throws Exception {
+        return super.userDetailsServiceBean();
     }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService())
+        auth.userDetailsService(
+                        email -> {
+                            log.debug("Authenticating '{}'", email);
+                            Optional<User> optionalUser = userRepository.getByEmail(email);
+                            return new AuthUser(optionalUser.orElseThrow(
+                                    () -> new UsernameNotFoundException("User '" + email + "' was not found")));
+                        })
                 .passwordEncoder(PASSWORD_ENCODER);
     }
 
