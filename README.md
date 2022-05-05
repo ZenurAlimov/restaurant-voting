@@ -6,6 +6,7 @@
 - Lombok
 - Mapstruct
 - H2 Database
+- Liquibase
 - JUnit 5
 - Swagger/ OpenAPI 3.0
 -----------------------------------------------------
