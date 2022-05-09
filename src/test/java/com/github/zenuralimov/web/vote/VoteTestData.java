@@ -12,7 +12,7 @@ import static com.github.zenuralimov.web.user.UserTestData.admin;
 import static com.github.zenuralimov.web.user.UserTestData.user;
 
 public class VoteTestData {
-    public static MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class);
+    public static MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER = MatcherFactory.usingEqualsComparator(VoteTo.class);
 
     public static final int VOTE1_ID = 1;
     public static final int ADMIN_VOTE_ID = 3;

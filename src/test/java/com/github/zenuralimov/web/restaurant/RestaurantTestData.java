@@ -6,9 +6,9 @@ import com.github.zenuralimov.web.MatcherFactory;
 
 public class RestaurantTestData {
     public static final MatcherFactory.Matcher<Restaurant> REST_MATCHER
-            = MatcherFactory.usingIgnoringFieldsComparator(Restaurant.class);
+            = MatcherFactory.usingEqualsComparator(Restaurant.class);
     public static final MatcherFactory.Matcher<RestaurantTo> REST_TO_MATCHER
-            = MatcherFactory.usingIgnoringFieldsComparator(RestaurantTo.class);
+            = MatcherFactory.usingEqualsComparator(RestaurantTo.class);
 
     public static final int KFC_ID = 1;
     public static final int MC_ID = 2;

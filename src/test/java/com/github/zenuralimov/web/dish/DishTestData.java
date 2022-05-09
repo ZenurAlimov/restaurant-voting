@@ -13,7 +13,7 @@ public class DishTestData {
             = MatcherFactory.usingIgnoringFieldsComparator(Dish.class, "restaurant");
 
     public static final MatcherFactory.Matcher<DishTo> DISH_TO_MATCHER
-            = MatcherFactory.usingIgnoringFieldsComparator(DishTo.class);
+            = MatcherFactory.usingEqualsComparator(DishTo.class);
 
     public static final int DISH1_ID = 1;
     public static final int DISH13_ID = 13;
