@@ -29,11 +29,6 @@ Build a voting system for deciding where to have lunch.
 - Run: `mvn spring-boot:run` in root directory.
 -----------------------------------------------------
 [REST API documentation](http://localhost:8080/swagger-ui.html)  
-Credentials:
-```
-User:  user@yandex.ru / password
-Admin: admin@gmail.com / admin
-```
 
 ## Description:
 ### 1. Аny user can view all restaurants with food for today:
