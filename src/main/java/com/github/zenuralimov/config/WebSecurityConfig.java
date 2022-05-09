@@ -32,6 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     @Override
+    // https://stackoverflow.com/a/70176629/548473
     public UserDetailsService userDetailsServiceBean() throws Exception {
         return super.userDetailsServiceBean();
     }
@@ -41,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(
                         email -> {
                             log.debug("Authenticating '{}'", email);
-                            Optional<User> optionalUser = userRepository.getByEmail(email);
+                            Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
                             return new AuthUser(optionalUser.orElseThrow(
                                     () -> new UsernameNotFoundException("User '" + email + "' was not found")));
                         })

@@ -28,7 +28,7 @@ public class UniqueMailValidator implements org.springframework.validation.Valid
     public void validate(@NonNull Object target, @NonNull Errors errors) {
         HasIdAndEmail user = ((HasIdAndEmail) target);
         if (StringUtils.hasText(user.getEmail())) {
-            repository.getByEmail(user.getEmail().toLowerCase())
+            repository.findByEmailIgnoreCase(user.getEmail())
                     .ifPresent(dbUser -> {
                         if (request.getMethod().equals("PUT")) {  // UPDATE
                             int dbId = dbUser.id();
