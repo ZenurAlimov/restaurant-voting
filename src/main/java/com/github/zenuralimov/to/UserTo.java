@@ -2,7 +2,6 @@ package com.github.zenuralimov.to;
 
 import com.github.zenuralimov.util.validation.NoHtml;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.Value;
 import com.github.zenuralimov.HasIdAndEmail;
 
@@ -12,7 +11,6 @@ import javax.validation.constraints.Size;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 public class UserTo extends NamedTo implements HasIdAndEmail {
     @Email
     @NotBlank
@@ -28,5 +26,10 @@ public class UserTo extends NamedTo implements HasIdAndEmail {
         super(id, name);
         this.email = email;
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "UserTo:" + id + '[' + email + ']';
     }
 }
