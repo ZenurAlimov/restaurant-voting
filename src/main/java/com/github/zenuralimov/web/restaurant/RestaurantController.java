@@ -4,6 +4,7 @@ import com.github.zenuralimov.error.IllegalRequestDataException;
 import com.github.zenuralimov.repository.RestaurantRepository;
 import com.github.zenuralimov.to.RestaurantTo;
 import com.github.zenuralimov.util.CommonMapper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
+@Tag(name = "Restaurant Controller")
 public class RestaurantController {
 
     static final String REST_URL = "/api/restaurants";

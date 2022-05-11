@@ -4,6 +4,7 @@ import com.github.zenuralimov.model.User;
 import com.github.zenuralimov.to.UserTo;
 import com.github.zenuralimov.util.UserUtil;
 import com.github.zenuralimov.util.validation.ValidationUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import java.net.URI;
 @RestController
 @RequestMapping(value = ProfileController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@Tag(name = "Profile Controller")
 public class ProfileController extends AbstractUserController {
     static final String REST_URL = "/api/profile";
 

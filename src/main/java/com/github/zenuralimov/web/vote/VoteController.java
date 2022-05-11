@@ -10,6 +10,7 @@ import com.github.zenuralimov.to.VoteTo;
 import com.github.zenuralimov.util.CommonMapper;
 import com.github.zenuralimov.util.TimeUtil;
 import com.github.zenuralimov.web.AuthUser;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,6 +35,7 @@ import static com.github.zenuralimov.web.GlobalExceptionHandler.EXCEPTION_UPDATE
 @RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @AllArgsConstructor
+@Tag(name = "Vote Controller")
 public class VoteController {
 
     static final String REST_URL = "/api/votes";

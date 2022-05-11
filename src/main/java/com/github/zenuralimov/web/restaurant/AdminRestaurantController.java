@@ -4,6 +4,7 @@ import com.github.zenuralimov.error.IllegalRequestDataException;
 import com.github.zenuralimov.model.Restaurant;
 import com.github.zenuralimov.repository.DishRepository;
 import com.github.zenuralimov.repository.RestaurantRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
@@ -29,6 +30,7 @@ import static com.github.zenuralimov.util.validation.ValidationUtil.checkNew;
 @Slf4j
 @AllArgsConstructor
 @CacheConfig(cacheNames = "restaurants")
+@Tag(name = "Admin Restaurant Controller")
 public class AdminRestaurantController {
 
     static final String REST_URL = "/api/admin/restaurants";
