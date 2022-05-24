@@ -18,10 +18,6 @@ spring:
     #    tcp: jdbc:h2:tcp://localhost:9092/mem:voting
     username: sa
     password:
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.xml
-    drop-first: true
 
   # Jackson Serialization Issue Resolver
   jackson:
@@ -36,12 +32,16 @@ spring:
     cache-names: restaurants
     caffeine.spec: maximumSize=1,expireAfterAccess=60s
 
+  liquibase:
+    changeLog: "classpath:db/changelog.sql"
+
 logging:
   level:
     root: WARN
     com.github.zenuralimov: DEBUG
     org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
     org.springframework.cache: TRACE
+    liquibase: DEBUG
 
 server.servlet:
   encoding:
