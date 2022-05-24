@@ -9,18 +9,18 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "dish", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "restaurant_id", "date"}, name = "dish_unique_name_restaurant_date_idx"))
+@Table(name = "dish", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "restaurant_id", "date"}, name = "uk_dish"))
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
 public class Dish extends NamedEntity {
 
-    @Column(name = "price", nullable = false, columnDefinition = "int")
+    @Column(name = "price", nullable = false)
     @NotNull
     private Integer price;
 
-    @Column(name = "date", nullable = false, columnDefinition = "date default now()")
+    @Column(name = "date", nullable = false)
     @NotNull
     private LocalDate date;
 

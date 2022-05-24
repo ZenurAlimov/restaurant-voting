@@ -35,8 +35,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String EXCEPTION_UPDATE_VOTE = "Vote can only be changed before ";
 
     private static final Map<String, String> CONSTRAINS_MAP = Map.of(
-            "restaurant_unique_name_idx", EXCEPTION_DUPLICATE_RESTAURANT,
-            "dish_unique_name_restaurant_date_idx", EXCEPTION_DUPLICATE_DISH);
+            "uk_restaurant", EXCEPTION_DUPLICATE_RESTAURANT,
+            "uk_dish", EXCEPTION_DUPLICATE_DISH);
 
     private final ErrorAttributes errorAttributes;
 
