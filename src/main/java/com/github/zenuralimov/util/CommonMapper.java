@@ -12,11 +12,13 @@ import org.mapstruct.Mapping;
 import java.util.Collection;
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CommonMapper {
 
     DishTo createTo(Dish dish);
     List<DishTo> getDishTos(Collection<Dish> dishes);
+    @Mapping(target = "date", ignore = true)
+    @Mapping(target = "restaurant", ignore = true)
     Dish toEntity(DishTo dishTo);
 
     RestaurantTo createTo(Restaurant restaurant);
